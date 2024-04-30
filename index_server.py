@@ -17,14 +17,13 @@ print(f'Server ready and listening on {IP}:{PORT}')
 clients = {}  #List of clients, values should be tuples of IP and Ports
 try:
     while True:
-        print("Waiting for message")
         nickname, address = server_socket.recvfrom(BUFFER_SIZE)
-        print("Got message")
         nickname = nickname.decode()
-        print(nickname, "has entered the server at ", address)
         clients.update({nickname : address})
         server_socket.sendto('Welcome to the server'.encode(), address)
         print(nickname, "has entered the server at ",address)
+        print(len(clients))
+        print(clients)
         pass
 except KeyboardInterrupt as ki:
     pass
