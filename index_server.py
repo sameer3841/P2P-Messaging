@@ -16,7 +16,9 @@ clients = {}  #List of clients, values should be tuples of IP and Ports
 try:
     while True:
         nickname, address = server_socket.recvfrom(BUFFER_SIZE)
-        clients.update({nickname.decode() : address})
+        nickname = nickname.decode()
+        print(nickname, "has entered the server at ", address)
+        clients.update({nickname : address})
         server_socket.sendto('Welcome to the server'.encode(), address)
         print(nickname, "has entered the server at ",address)
         pass
