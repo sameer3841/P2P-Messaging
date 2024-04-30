@@ -6,7 +6,7 @@ import ip
 
 
 
-def member(nickname):
+def member(type , nickname):
     BUFFER_SIZE = 1024
     peer = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -14,8 +14,8 @@ def member(nickname):
     peer.bind((address))
     print(address)
     print(server_address)
-    peer.sendto(nickname.encode(), server_address)
-    print("sent")
+    message = type+" "+nickname
+    peer.sendto(message.encode(), server_address)
     while True:
         pass
-member(input("Enter a nickname: "))
+member(input("Enter the type: "), input("Enter a nickname: "))
