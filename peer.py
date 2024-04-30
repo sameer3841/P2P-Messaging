@@ -1,15 +1,11 @@
 import socket
 import os
 import threading
-import socket
 
-
-def get_ip_address():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+def get_ip_address(s : socket.socket):
     s.connect(("8.8.8.8", 80))
-    return s.getsockname()[0]
-
-
-print(get_ip_address())
-
-
+    return s.getsockname()
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+print(get_ip_address(s))
+# s.bind(get_ip_address(s))
+print("Binded")
