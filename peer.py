@@ -6,15 +6,15 @@ import ip
 
 
 
-def member(type , nickname):
+def member(datatype , nickname):
     BUFFER_SIZE = 1024
     peer = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     address, server_address = ip.get_ip_address()
-    peer.bind((address))
+    peer.bind(address)
     print(address)
     print(server_address)
-    message = type+" "+nickname
+    message = datatype + " " + nickname
     peer.sendto(message.encode(), server_address)
     while True:
         pass

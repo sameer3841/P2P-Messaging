@@ -33,7 +33,7 @@ try:
         print(type)
         if (type == 'S'):
             pass
-        elif (type == 'G'):
+        elif type == 'G':
             print(clients)
             pass
         elif (type == 'A'):
