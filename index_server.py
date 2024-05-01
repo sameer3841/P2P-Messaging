@@ -1,12 +1,10 @@
 import socket
-import os
-import sys
+
 import threading
-import threading as thr
-import ip
+
 
 BUFFER_SIZE = 1024
-IP, PORT = "127.0.0.1", 12001
+IP, PORT = "127.0.0.1", 12000
 clients = {}
 
 
@@ -34,22 +32,24 @@ def service_peer_connection(a_socket, address):
     clients.update({nickname: address})
     print(f"{nickname} connected from {address}.")
     a_socket.send(b"Welcome to the server!\n")
-    message_type = ""
-    message = a_socket.recv(BUFFER_SIZE)
-    message = message.decode().upper()
-    message_type = message_type
-    if message == 'S':
-        a_socket.send(b"Who would you like to chat with")
+
+    while True:
         message = a_socket.recv(BUFFER_SIZE)
-        peer_ip, peer_port = clients.get(message)
-        connect_peer((peer_ip, peer_port))
-    elif message == 'G':
-        a_socket.send(str(clients).encode())
-    elif message == 'A':
-        pass
-    elif message == 'L':
-        remove(address)
-        a_socket.close()
+        message = message.decode().upper()
+        if message == 'S':
+            a_socket.send(b"Who would you like to chat with")
+            message = a_socket.recv(BUFFER_SIZE)
+            peer_ip, peer_port = clients.get(message)
+            connect_peer((peer_ip, peer_port))
+        elif message == 'G':
+            a_socket.send(str(clients).encode())
+        elif message == 'A':
+            pass
+        elif message == 'L':
+            remove(address)
+            a_socket.close()
+            break
+
 
 
 def main():
