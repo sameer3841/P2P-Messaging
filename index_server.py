@@ -17,9 +17,15 @@ def enter(peer_socket):
 def remove(address):
     for x in clients.keys():
         if clients.get(x) == address:
+            print(x + " left the network")
             clients.pop(x)
-            return 1
-    print("Address not found")
+            break
+
+
+def connect_peer(peer_address):
+    a_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    a_socket.bind(peer_address)
+    return a_socket
 
 
 def main():
@@ -37,24 +43,23 @@ def main():
             clients.update({nickname: address})
             print(f"{nickname} connected from {address}.")
             peer_socket.send(b"Welcome to the server!\n")
-            message = peer_socket.recv(BUFFER_SIZE)
-            message = message.decode()
-            message_type = message[0].upper()
-            message = message[1:]
-            if message_type == 'S':
-                pass
-            elif message_type == 'G':
-                peer_socket.send(str(clients).encode())
-                pass
-            elif message_type == 'A':
-                pass
-            elif message_type == 'L':
-                remove(address)
-                peer_socket.send(b'You closed the connection ')
-                peer_socket.close()
-
-
-
+            message_type = ""
+            while message_type.upper() != "L":
+                message = peer_socket.recv(BUFFER_SIZE)
+                message = message.decode().upper()
+                message_type = message_type
+                if message == 'S':
+                    peer_socket.send(b"Who would you like to chat with")
+                    message = peer_socket.recv(BUFFER_SIZE)
+                    peer_ip, peer_port = clients.get(message)
+                    connect_peer((peer_ip, peer_port))
+                elif message == 'G':
+                    peer_socket.send(str(clients).encode())
+                elif message == 'A':
+                    pass
+                elif message == 'L':
+                    remove(address)
+                    peer_socket.close()
     except KeyboardInterrupt:
         print("Server is shutting down.")
     finally:
