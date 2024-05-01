@@ -33,6 +33,3 @@ while flag:
     print(message.decode())
     if last_message_type.upper() == 'L':
         flag = False
-
-
-

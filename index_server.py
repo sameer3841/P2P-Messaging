@@ -4,6 +4,7 @@ import threading
 
 
 BUFFER_SIZE = 1024
+
 IP, PORT = "127.0.0.1", 12000
 clients = {}
 
@@ -74,6 +75,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 # finally:
