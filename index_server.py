@@ -6,20 +6,20 @@ import ip
 
 BUFFER_SIZE = 1024
 IP, PORT = "127.0.0.1", 12000
-
-
-# def remove(address):
-#     for x in clients.keys():
-#         if clients.get(x) == address:
-#             clients.pop(x)
-#             return 1
-#     print("Address not found")
+clients = {}
 
 
 def enter(peer_socket):
-    """Receive the client's nickname from the socket."""
-    nickname = peer_socket.recv(1024).decode('utf-8')
-    return nickname.strip()
+    nickname = peer_socket.recv(BUFFER_SIZE).decode()
+    return nickname
+
+
+def remove(address):
+    for x in clients.keys():
+        if clients.get(x) == address:
+            clients.pop(x)
+            return 1
+    print("Address not found")
 
 
 def main():
@@ -27,8 +27,6 @@ def main():
     server_socket.bind((IP, PORT))
     server_socket.listen()
     print(f'Server ready and listening on {IP}:{PORT}')
-
-    clients = {}
 
     try:
         while True:
@@ -39,14 +37,28 @@ def main():
             clients.update({nickname: address})
             print(f"{nickname} connected from {address}.")
             peer_socket.send(b"Welcome to the server!\n")
+            message = peer_socket.recv(BUFFER_SIZE)
+            message = message.decode()
+            message_type = message[0].upper()
+            message = message[1:]
+            if message_type == 'S':
+                pass
+            elif message_type == 'G':
+                peer_socket.send(str(clients).encode())
+                pass
+            elif message_type == 'A':
+                pass
+            elif message_type == 'L':
+                remove(address)
+                peer_socket.send(b'You closed the connection ')
+                peer_socket.close()
 
-            # Here, add handling for additional data from clients if necessary
+
+
     except KeyboardInterrupt:
         print("Server is shutting down.")
     finally:
         server_socket.close()
-        for nickname, (sock, _) in clients.items():
-            sock.close()
         print("Cleaned up all connections.")
 
 
