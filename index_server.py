@@ -6,12 +6,12 @@ import ip
 
 BUFFER_SIZE = 1024
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-#IP, PORT = ip.get_ip_address(server_socket)
+# IP, PORT = ip.get_ip_address(server_socket)
 IP, PORT = "10.33.16.1", 12000
 IP = "127.0.0.1"
 server_socket.bind((IP, PORT))
 print(f'Server ready and listening on {IP}:{PORT}')
-clients = {}  #List of clients, values should be tuples of IP and Ports
+clients = {}  # List of clients, values should be tuples of IP and Ports
 
 
 def remove(address):
@@ -21,40 +21,37 @@ def remove(address):
             return 1
     print("Address not found")
 
-def enter(nickname, address):
-    clients.update({nickname: address})
+
+def enter(a_socket):
+    nickname, address = a_socket.recvfrom(BUFFER_SIZE)
     server_socket.sendto('Welcome to the server'.encode(), address)
-    print(nickname, "has entered the server at ", address)
+    print(nickname.decode(), "has entered the server at ", address)
+    return nickname, address
+
+
 try:
+    nickname, address = enter(server_socket)
+    clients.update({nickname: address})
     while True:
-        message, address = server_socket.recvfrom(BUFFER_SIZE)
-        message = message.decode()
-        type = message[0]
-        print(type)
-        if (type == 'S'):
+        message, peer_address = server_socket.recvfrom(BUFFER_SIZE)
+        message_type = message.decode()[0].upper()
+        message = message.decode()[1:]
+        if message_type == 'S':
             pass
-        elif (type == 'G'):
-            print(clients)
+        elif message_type == 'G':
+            server_socket.sendto(str(clients).encode(), peer_address)
             pass
-        elif (type == 'A'):
+        elif message_type == 'A':
             pass
-        elif (type == 'L'):
+        elif message_type == 'L':
             remove(address)
-        if (not (address in clients)):
-            enter(message, address)
-        ############################ To be moved to a join function
-        nickname = message[2:]
-        clients.update({nickname: address})
-        server_socket.sendto('Welcome to the server'.encode(), address)
-        print(nickname, "has entered the server at ", address)
-        ############################ To be moved to a join function
 
         pass
 except KeyboardInterrupt as ki:
     pass
 
 
-#finally:
+# finally:
 #    server_socket.close()
 def receive():
     pass
