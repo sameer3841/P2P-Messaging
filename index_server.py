@@ -21,11 +21,15 @@ def remove(address):
             clients.pop(x)
             break
 
+def sender(message, recv_IP, recv_PORT):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect((recv_IP, recv_PORT))
+    sock.sendto(message.encode(),(recv_IP, recv_PORT))
 
-def connect_peer(peer_address):
-    a_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    a_socket.bind(peer_address)
-    return a_socket
+# def connect_peer(peer_address):
+#     a_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+#     a_socket.bind(peer_address)
+#     return a_socket
 
 
 def service_peer_connection(a_socket, address):
@@ -37,11 +41,19 @@ def service_peer_connection(a_socket, address):
     while True:
         message = a_socket.recv(BUFFER_SIZE)
         message = message.decode().upper()
+
         if message == 'S':
-            a_socket.send(b"Who would you like to chat with")
+            print("Sending Message")
+            a_socket.send(b"Who would you like to chat with?")
+            user = a_socket.recv(BUFFER_SIZE)
+            user = user.decode()
+            print(user)
+            peer_ip, peer_port = clients.get(user)
+            # connect_peer((peer_ip, peer_port))
+            a_socket.send(b"What message would you like to send?")
             message = a_socket.recv(BUFFER_SIZE)
-            peer_ip, peer_port = clients.get(message)
-            connect_peer((peer_ip, peer_port))
+            message = message.decode()
+            sender(message,peer_ip,peer_port)
         elif message == 'G':
             a_socket.send(str(clients).encode())
         elif message == 'A':
@@ -80,8 +92,9 @@ if __name__ == "__main__":
 
 # finally:
 #    server_socket.close()
-def receive():
-    pass
+def receive(a_socket):
+    msg = a_socket.recv(BUFFER_SIZE)
+
 
 
 def send():  # Probably gonna need multiple send and receive for each type

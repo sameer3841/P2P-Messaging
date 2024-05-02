@@ -17,9 +17,13 @@ def enter_network(peer, nickname):
     peer.send(nickname.encode())
 
 
-def send_message_type(message_type):
-    peer_socket.send(message_type.encode())
-    return message_type
+def receiver(a_socket: socket.socket):
+    msgg = a_socket.recv(BUFFER_SIZE)
+    return msgg.decode()
+
+def sender(person):
+    peer_socket.send(person.encode())
+    return person
 
 
 enter_network(peer_socket, input("Enter a nickname: "))
@@ -28,8 +32,17 @@ print(message.decode())
 last_message_type = ""
 flag = True
 while flag:
-    last_message_type = send_message_type(input("What type of message do you want to send: "))
+
+    last_message_type = sender(input("What type of message do you want to send: "))
     message = peer_socket.recv(BUFFER_SIZE)
     print(message.decode())
-    if last_message_type.upper() == 'L':
+    if last_message_type.upper() == 'R':
+        msg = receiver(peer_socket)
+        print(msg)
+    elif last_message_type.upper() == 'S':
+        user = sender(input())
+        message = peer_socket.recv(BUFFER_SIZE)
+        print(message.decode())
+        msg = input()
+    elif last_message_type.upper() == 'L':
         flag = False
