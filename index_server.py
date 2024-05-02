@@ -54,10 +54,7 @@ def service_peer_connection(a_socket, address):
                 peer_ip, peer_port = peer_address
                 # connect_peer((peer_ip, peer_port))
                 ########################################################
-                a_socket.send(b"What message would you like to send?")
-                message = a_socket.recv(BUFFER_SIZE)
-                message = message.decode()
-                sender(message, peer_ip, peer_port)
+                a_socket.send(f"{user} {peer_ip} {peer_port}".encode())
                 ########################################################
         elif message == 'G':
             a_socket.send(str(clients).encode())
