@@ -14,14 +14,14 @@ print(address, server_address)
 def enter_network(peer, nickname):
     peer_socket.connect(server_address)
     peer_socket.send(nickname.encode())
-
+    #Returns a socket representing the server
 
 def receiver():
     peer_socket.listen(1)
     sender, address = peer_socket.accept()
     nickname = sender.recv(BUFFER_SIZE).decode()  #Receives the nickname
     print(nickname, "from", address, "has established a connection.")
-    sender.send(f"Hello {nickname} what did you want say?".encode())
+    sender.send(f"Hello {nickname} what did you want say?".encode())# sends to the sender
     message = ""
     while (message.upper() != "E"):
         message = sender.recv(BUFFER_SIZE).decode()
