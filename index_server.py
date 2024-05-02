@@ -1,10 +1,7 @@
 import socket
-
 import threading
 
-
 BUFFER_SIZE = 1024
-
 IP, PORT = "127.0.0.1", 12000
 clients = {}
 
@@ -14,17 +11,19 @@ def enter(peer_socket):
     return nickname
 
 
-def remove(address):
+def remove(address):  # We could make this target the peer instead of the address
     for x in clients.keys():
         if clients.get(x) == address:
             print(x + " left the network")
             clients.pop(x)
             break
 
+
 def sender(message, recv_IP, recv_PORT):
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # To be deleted
     sock.connect((recv_IP, recv_PORT))
-    sock.sendto(message.encode(),(recv_IP, recv_PORT))
+    sock.sendto(message.encode(), (recv_IP, recv_PORT))
+
 
 # def connect_peer(peer_address):
 #     a_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -48,12 +47,18 @@ def service_peer_connection(a_socket, address):
             user = a_socket.recv(BUFFER_SIZE)
             user = user.decode()
             print(user)
-            peer_ip, peer_port = clients.get(user)
-            # connect_peer((peer_ip, peer_port))
-            a_socket.send(b"What message would you like to send?")
-            message = a_socket.recv(BUFFER_SIZE)
-            message = message.decode()
-            sender(message,peer_ip,peer_port)
+            peer_address = clients.get(user)
+            if (peer_address == None):
+                a_socket.send(b"Sorry, there is no user by that name.")
+            else:
+                peer_ip, peer_port = peer_address
+                # connect_peer((peer_ip, peer_port))
+                ########################################################
+                a_socket.send(b"What message would you like to send?")
+                message = a_socket.recv(BUFFER_SIZE)
+                message = message.decode()
+                sender(message, peer_ip, peer_port)
+                ########################################################
         elif message == 'G':
             a_socket.send(str(clients).encode())
         elif message == 'A':
@@ -62,7 +67,8 @@ def service_peer_connection(a_socket, address):
             remove(address)
             a_socket.close()
             break
-
+        else:
+            pass
 
 
 def main():
@@ -89,12 +95,10 @@ if __name__ == "__main__":
     main()
 
 
-
 # finally:
 #    server_socket.close()
 def receive(a_socket):
     msg = a_socket.recv(BUFFER_SIZE)
-
 
 
 def send():  # Probably gonna need multiple send and receive for each type
