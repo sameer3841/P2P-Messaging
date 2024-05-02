@@ -53,7 +53,7 @@ def sender(a_socket):
             peer_port = int(peer_port)
             a_socket.connect((peer_ip, peer_port))#########################
     elif last_message_type.upper() == 'L':
-        flag = False
+        return False
     elif last_message_type.upper() == 'NONE':
         pass
     else:
@@ -67,10 +67,13 @@ print(message.decode())
 flag = True
 while flag:
     send = thr.Thread(target=sender,args=(peer_socket,))
-    # receive = thr.Thread(target=receiver,args=(peer_socket,))
+    receive = thr.Thread(target=receiver,args=(peer_socket,))
     request = input("Do you want to send a message: ")
     if request.upper() == 'Y' or request.upper() == 'YES':
-        sender(peer_socket)
+        message = sender(peer_socket)
+        if(message == "L"):
+            flag = False
+
     else:
         print("receiver")
-        receiver(peer_socket)
+        receive.start()
